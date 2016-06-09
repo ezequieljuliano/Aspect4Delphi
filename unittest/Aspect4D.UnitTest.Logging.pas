@@ -15,7 +15,11 @@ type
   LoggingAttribute = class(AspectAttribute);
 
   TLoggingAspect = class(TAspect, IAspect)
-  public
+  private
+    { private declarations }
+  protected
+    function GetName: string;
+
     procedure DoBefore(instance: TObject; method: TRttiMethod;
       const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 
@@ -25,6 +29,8 @@ type
     procedure DoException(instance: TObject; method: TRttiMethod;
       const args: TArray<TValue>; out raiseException: Boolean;
       theException: Exception; out result: TValue);
+  public
+    { public declarations }
   end;
 
 function GlobalLoggingList: TStringList;
@@ -68,6 +74,11 @@ begin
   for att in method.GetAttributes do
     if att is LoggingAttribute then
       GlobalLoggingList.Add('Exception ' + instance.QualifiedClassName + ' - ' + method.Name + ' - ' + theException.Message);
+end;
+
+function TLoggingAspect.GetName: string;
+begin
+  Result := Self.QualifiedClassName;
 end;
 
 initialization

@@ -30,17 +30,23 @@ You can create specific exceptions of its aspect as in this example. Also, you m
   	   LoggingAttribute = class(AspectAttribute);
 
   	   TLoggingAspect = class(TAspect, IAspect)
-  	   public
-    	procedure DoBefore(instance: TObject; method: TRttiMethod;
-      		const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
+  	   private
+    	  { private declarations }
+  	   protected
+    	  function GetName: string;
 
-    	procedure DoAfter(instance: TObject; method: TRttiMethod;
-      		const args: TArray<TValue>; var result: TValue);
+    	  procedure DoBefore(instance: TObject; method: TRttiMethod;
+             const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 
-    	procedure DoException(instance: TObject; method: TRttiMethod;
-      		const args: TArray<TValue>; out raiseException: Boolean;
-      		theException: Exception; out result: TValue);
-  		end;
+          procedure DoAfter(instance: TObject; method: TRttiMethod;
+             const args: TArray<TValue>; var result: TValue);
+
+          procedure DoException(instance: TObject; method: TRttiMethod;
+             const args: TArray<TValue>; out raiseException: Boolean;
+             theException: Exception; out result: TValue);
+       public
+          { public declarations }
+  	   end;
 
    	{ TLoggingAspect }
 
@@ -75,6 +81,11 @@ You can create specific exceptions of its aspect as in this example. Also, you m
 					+ method.Name + ' - ' + theException.Message);
 	end;
 
+	function TLoggingAspect.GetName: string;
+	begin
+	   Result := Self.QualifiedClassName;
+	end;
+
 Now to use their aspect, you simply add the custom attribute in their methods and remember to leave them as **virtual** (this is necessary because Delphi can only intercept the virtual methods).
 
     
@@ -105,7 +116,7 @@ Now create AOP context, register your aspect (for example TLoggingAspect) and us
        entity: TEntity;
 	begin
 	   aspectContext := TAspectContext.Create;
-  	   aspectContext.Register(TLoggingAspect);
+  	   aspectContext.Register(TLoggingAspect.Create);
 
 	   entity := TCarEntity.Create;
        try		

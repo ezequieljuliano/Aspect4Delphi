@@ -19,8 +19,8 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure Add(const qualifiedClassName: string; aspect: IAspect);
-    function Contains(const qualifiedClassName: string): Boolean;
+    procedure Add(const name: string; aspect: IAspect);
+    function Contains(const name: string): Boolean;
 
     procedure DoBefore(instance: TObject; method: TRttiMethod;
       const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
@@ -48,13 +48,10 @@ type
 
   TAspectContext = class(TInterfacedObject, IAspectContext)
   private
-    const
-    DOES_NOT_IMPLEMENT_INTERFACE = 'Aspect Class does not implement interface IAspect.';
-  private
     fInterceptor: TAspectInterceptor;
     fWeaver: IAspectWeaver;
   protected
-    procedure &Register(aspectClass: TAspectClass);
+    procedure &Register(aspect: IAspect);
     function Weaver: IAspectWeaver;
   public
     constructor Create;
@@ -65,14 +62,14 @@ implementation
 
 { TAspectInterceptor }
 
-procedure TAspectInterceptor.Add(const qualifiedClassName: string; aspect: IAspect);
+procedure TAspectInterceptor.Add(const name: string; aspect: IAspect);
 begin
-  fAspects.AddOrSetValue(qualifiedClassName, aspect);
+  fAspects.AddOrSetValue(name, aspect);
 end;
 
-function TAspectInterceptor.Contains(const qualifiedClassName: string): Boolean;
+function TAspectInterceptor.Contains(const name: string): Boolean;
 begin
-  Result := fAspects.ContainsKey(qualifiedClassName);
+  Result := fAspects.ContainsKey(name);
 end;
 
 constructor TAspectInterceptor.Create;
@@ -169,13 +166,10 @@ begin
   inherited Destroy;
 end;
 
-procedure TAspectContext.Register(aspectClass: TAspectClass);
+procedure TAspectContext.Register(aspect: IAspect);
 begin
-  if not Supports(aspectClass, IAspect) then
-    raise EAspectException.Create(DOES_NOT_IMPLEMENT_INTERFACE);
-
-  if not fInterceptor.Contains(aspectClass.QualifiedClassName) then
-    fInterceptor.Add(aspectClass.QualifiedClassName, (aspectClass.Create as IAspect));
+  if not fInterceptor.Contains(aspect.Name) then
+    fInterceptor.Add(aspect.Name, aspect);
 end;
 
 function TAspectContext.Weaver: IAspectWeaver;

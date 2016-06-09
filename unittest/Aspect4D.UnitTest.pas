@@ -35,8 +35,8 @@ procedure TTestAspect4D.SetUp;
 begin
   inherited;
   fAspectContext := TAspectContext.Create;
-  fAspectContext.Register(TLoggingAspect);
-  fAspectContext.Register(TSecurityAspect);
+  fAspectContext.Register(TLoggingAspect.Create);
+  fAspectContext.Register(TSecurityAspect.Create);
 
   fCarEntity := TCarEntity.Create;
   fAspectContext.Weaver.Proxify(fCarEntity);

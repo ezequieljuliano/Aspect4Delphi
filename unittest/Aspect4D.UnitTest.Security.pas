@@ -22,7 +22,11 @@ type
   end;
 
   TSecurityAspect = class(TAspect, IAspect)
-  public
+  private
+    { private declarations }
+  protected
+    function GetName: string;
+
     procedure DoBefore(instance: TObject; method: TRttiMethod;
       const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 
@@ -32,6 +36,8 @@ type
     procedure DoException(instance: TObject; method: TRttiMethod;
       const args: TArray<TValue>; out raiseException: Boolean;
       theException: Exception; out result: TValue);
+  public
+    { public declarations }
   end;
 
 var
@@ -68,6 +74,11 @@ procedure TSecurityAspect.DoException(instance: TObject; method: TRttiMethod; co
   theException: Exception; out result: TValue);
 begin
   // Method unused
+end;
+
+function TSecurityAspect.GetName: string;
+begin
+  Result := Self.QualifiedClassName;
 end;
 
 end.
