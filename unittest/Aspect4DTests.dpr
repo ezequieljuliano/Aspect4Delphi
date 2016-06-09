@@ -19,7 +19,9 @@ uses
   Aspect4D.UnitTest in 'Aspect4D.UnitTest.pas',
   Aspect4D in '..\src\Aspect4D.pas',
   Aspect4D.UnitTest.Security in 'Aspect4D.UnitTest.Security.pas',
-  Aspect4D.UnitTest.Logging in 'Aspect4D.UnitTest.Logging.pas';
+  Aspect4D.UnitTest.Logging in 'Aspect4D.UnitTest.Logging.pas',
+  Aspect4D.Impl in '..\src\Aspect4D.Impl.pas',
+  Aspect4D.UnitTest.Entity in 'Aspect4D.UnitTest.Entity.pas';
 
 {$R *.RES}
 

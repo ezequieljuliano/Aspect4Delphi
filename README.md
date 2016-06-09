@@ -18,105 +18,110 @@ Now you must implement and register your aspect. I will show an example for use 
 You can create specific exceptions of its aspect as in this example. Also, you must define a custom attribute (inheritance AspectAttribute) to annotate the methods you want to enter in the context of aspects.
 
     uses
-      Aspect4D,
-      System.Rtti,
-      System.SysUtils,
-      System.Classes;
+  	   Aspect4D,
+       System.Rtti,
+       System.SysUtils,
+       System.Classes;
 
-    Type
+    type
 
-    ELoggingException = class(Exception);
+  	   ELoggingException = class(Exception);
 
-    LoggingAttribute = class(AspectAttribute);
+  	   LoggingAttribute = class(AspectAttribute);
+
+  	   TLoggingAspect = class(TAspect, IAspect)
+  	   public
+    	procedure DoBefore(instance: TObject; method: TRttiMethod;
+      		const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
+
+    	procedure DoAfter(instance: TObject; method: TRttiMethod;
+      		const args: TArray<TValue>; var result: TValue);
+
+    	procedure DoException(instance: TObject; method: TRttiMethod;
+      		const args: TArray<TValue>; out raiseException: Boolean;
+      		theException: Exception; out result: TValue);
+  		end;
+
+   	{ TLoggingAspect }
+
+	procedure TLoggingAspect.DoAfter(instance: TObject; method: TRttiMethod; 
+	   const args: TArray<TValue>; var result: TValue);
+	var
+  	   att: TCustomAttribute;
+	begin
+  	   for att in method.GetAttributes do
+    	 if att is LoggingAttribute then
+      		GlobalLoggingList.Add('After ' + instance.QualifiedClassName + ' - ' + method.Name);
+	end;
+
+	procedure TLoggingAspect.DoBefore(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; 
+	   out invoke: Boolean; out result: TValue);
+	var
+  	   att: TCustomAttribute;
+	begin
+  	   for att in method.GetAttributes do
+    	 if att is LoggingAttribute then
+      		GlobalLoggingList.Add('Before ' + instance.QualifiedClassName + ' - ' + method.Name);
+	end;
+
+	procedure TLoggingAspect.DoException(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; 
+		out raiseException: Boolean; theException: Exception; out result: TValue);
+	var
+  	   att: TCustomAttribute;
+	begin
+  	   for att in method.GetAttributes do
+    	  if att is LoggingAttribute then
+      		GlobalLoggingList.Add('Exception ' + instance.QualifiedClassName + ' - ' 
+					+ method.Name + ' - ' + theException.Message);
+	end;
+
+Now to use their aspect, you simply add the custom attribute in their methods and remember to leave them as **virtual** (this is necessary because Delphi can only intercept the virtual methods).
+
     
-    TLoggingAspect = class(TAspect, IAspect)
-    public
-      procedure DoBefore(pInstance: TObject;
-        pMethod: TRttiMethod; const pArgs: TArray<TValue>; out pDoInvoke: Boolean;
-        out pResult: TValue);
+    TEntity = class
+    public    
+       [Logging]
+       procedure Insert; virtual;
     
-      procedure DoAfter(pInstance: TObject;
-        pMethod: TRttiMethod; const pArgs: TArray<TValue>; var pResult: TValue);
+       [Logging]
+       procedure Update; virtual;
     
-      procedure DoException(pInstance: TObject;
-        pMethod: TRttiMethod; const pArgs: TArray<TValue>; out pRaiseException: Boolean;
-        pTheException: Exception; out pResult: TValue);
+       [Logging]
+       procedure Delete; virtual;
     end;
 
-    procedure TLoggingAspect.DoAfter(pInstance: TObject; pMethod: TRttiMethod;
-      const pArgs: TArray<TValue>; var pResult: TValue);
-    var
-      vAtt: TCustomAttribute;
-    begin
-      for vAtt in pMethod.GetAttributes do
-    	if vAtt is LoggingAttribute then
-      		GlobalLoggingList.Add('After ' + 
-				pInstance.QualifiedClassName + ' - ' + pMethod.Name);
-    end;
-    
-    procedure TLoggingAspect.DoBefore(pInstance: TObject; pMethod: TRttiMethod;
-      const pArgs: TArray<TValue>; out pDoInvoke: Boolean; out pResult: TValue);
-    var
-      vAtt: TCustomAttribute;
-    begin
-      for vAtt in pMethod.GetAttributes do
-    	if vAtt is LoggingAttribute then
-      		GlobalLoggingList.Add('Before ' + 
-				pInstance.QualifiedClassName + ' - ' + pMethod.Name);
-    end;
-    
-    procedure TLoggingAspect.DoException(pInstance: TObject; pMethod: TRttiMethod;
-      const pArgs: TArray<TValue>; out pRaiseException: Boolean; 
-	  pTheException: Exception; out pResult: TValue);
-    var
-      vAtt: TCustomAttribute;
-    begin
-      for vAtt in pMethod.GetAttributes do
-    	if vAtt is LoggingAttribute then
-     		 GlobalLoggingList.Add('Exception ' + 
-				pInstance.QualifiedClassName + ' - ' 
-				+ pMethod.Name + ' - ' + pTheException.Message);
-    end;
 
-You must register the aspect created in the context of AOP. You can do this in the **initialization** section of the own Unit.
+Now create AOP context, register your aspect (for example TLoggingAspect) and use your entity to the context. 
 
-    initialization
-    Aspect.Register(TLoggingAspect);
+*Note: You can set AOP context as a singleton and create a base class to the Proxify and Unproxify*. 
 
-Now to use their appearance, you simply add the custom attribute in their methods and remember to leave them as **virtual** (this is necessary because Delphi can only intercept the virtual methods).
+	uses
+	   Aspect4D,
+  	   Aspect4D.Impl;
 
-    
-     TCar = class
-     public
-    	constructor Create;
-    	destructor Destroy; override;
-    
-    	[Logging]
-    	procedure Insert(); virtual;
-    
-    	[Logging]
-    	procedure Update(); virtual;
-    
-    	[Logging]
-    	procedure Delete(); virtual;
-     end;
+	procedure CreateAndUseAspect;
+	var
+	   aspectContext: IAspectContext;
+       entity: TEntity;
+	begin
+	   aspectContext := TAspectContext.Create;
+  	   aspectContext.Register(TLoggingAspect);
 
-To create the instance you must add the same in Weaver, to automate you can do this in constructors and destructors methods of each class.
-
-    constructor TCar.Create;
-    begin
-      Aspect.Weaver.Proxify(Self);
-    end;
-    
-    destructor TCar.Destroy;
-    begin
-      Aspect.Weaver.Unproxify(Self);
-      inherited;
-    end;
+	   entity := TCarEntity.Create;
+       try		
+		  aspectContext.Weaver.Proxify(entity);
+          entity.Insert;
+          entity.Update;
+          entity.Delete;
+          aspectContext.Weaver.Unproxify(entity);
+	   finally          
+		  entity.Free;
+       end;
+	end;
 
 Basically what it takes to use the Aspect4Delphi:
 
 - Create your aspect implementing IAspect interface.
-- Register your aspect using the Aspect.Register().
-- Add the instance to the context using the Aspect.Weaver.Proxify().
-- Remove the instance of using the context Aspect.Weaver.Unproxify();
+- Create AOP context and register your aspect.
+- Add the instance to the context using the Proxify.
+- Remove the instance of using the context Unproxify;

@@ -16,16 +16,15 @@ type
 
   TLoggingAspect = class(TAspect, IAspect)
   public
-    procedure DoBefore(pInstance: TObject;
-      pMethod: TRttiMethod; const pArgs: TArray<TValue>; out pDoInvoke: Boolean;
-      out pResult: TValue);
+    procedure DoBefore(instance: TObject; method: TRttiMethod;
+      const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 
-    procedure DoAfter(pInstance: TObject;
-      pMethod: TRttiMethod; const pArgs: TArray<TValue>; var pResult: TValue);
+    procedure DoAfter(instance: TObject; method: TRttiMethod;
+      const args: TArray<TValue>; var result: TValue);
 
-    procedure DoException(pInstance: TObject;
-      pMethod: TRttiMethod; const pArgs: TArray<TValue>; out pRaiseException: Boolean;
-      pTheException: Exception; out pResult: TValue);
+    procedure DoException(instance: TObject; method: TRttiMethod;
+      const args: TArray<TValue>; out raiseException: Boolean;
+      theException: Exception; out result: TValue);
   end;
 
 function GlobalLoggingList: TStringList;
@@ -33,54 +32,50 @@ function GlobalLoggingList: TStringList;
 implementation
 
 var
-  _vLoggingList: TStringList;
+  _LoggingList: TStringList;
 
 function GlobalLoggingList: TStringList;
 begin
-  Result := _vLoggingList;
+  Result := _LoggingList;
 end;
 
 { TLoggingAspect }
 
-procedure TLoggingAspect.DoAfter(pInstance: TObject; pMethod: TRttiMethod;
-  const pArgs: TArray<TValue>; var pResult: TValue);
+procedure TLoggingAspect.DoAfter(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; var result: TValue);
 var
-  vAtt: TCustomAttribute;
+  att: TCustomAttribute;
 begin
-  for vAtt in pMethod.GetAttributes do
-    if vAtt is LoggingAttribute then
-      GlobalLoggingList.Add('After ' + pInstance.QualifiedClassName + ' - ' + pMethod.Name);
+  for att in method.GetAttributes do
+    if att is LoggingAttribute then
+      GlobalLoggingList.Add('After ' + instance.QualifiedClassName + ' - ' + method.Name);
 end;
 
-procedure TLoggingAspect.DoBefore(pInstance: TObject; pMethod: TRttiMethod;
-  const pArgs: TArray<TValue>; out pDoInvoke: Boolean; out pResult: TValue);
+procedure TLoggingAspect.DoBefore(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; out invoke: Boolean;
+  out result: TValue);
 var
-  vAtt: TCustomAttribute;
+  att: TCustomAttribute;
 begin
-  for vAtt in pMethod.GetAttributes do
-    if vAtt is LoggingAttribute then
-      GlobalLoggingList.Add('Before ' + pInstance.QualifiedClassName + ' - ' + pMethod.Name);
+  for att in method.GetAttributes do
+    if att is LoggingAttribute then
+      GlobalLoggingList.Add('Before ' + instance.QualifiedClassName + ' - ' + method.Name);
 end;
 
-procedure TLoggingAspect.DoException(pInstance: TObject; pMethod: TRttiMethod;
-  const pArgs: TArray<TValue>; out pRaiseException: Boolean; pTheException: Exception;
-  out pResult: TValue);
+procedure TLoggingAspect.DoException(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; out raiseException: Boolean;
+  theException: Exception; out result: TValue);
 var
-  vAtt: TCustomAttribute;
+  att: TCustomAttribute;
 begin
-  for vAtt in pMethod.GetAttributes do
-    if vAtt is LoggingAttribute then
-      GlobalLoggingList.Add('Exception ' + pInstance.QualifiedClassName + ' - ' + pMethod.Name + ' - ' + pTheException.Message);
+  for att in method.GetAttributes do
+    if att is LoggingAttribute then
+      GlobalLoggingList.Add('Exception ' + instance.QualifiedClassName + ' - ' + method.Name + ' - ' + theException.Message);
 end;
 
 initialization
 
-Aspect.Register(TLoggingAspect);
-
-_vLoggingList := TStringList.Create;
+_LoggingList := TStringList.Create;
 
 finalization
 
-FreeAndNil(_vLoggingList);
+_LoggingList.Free;
 
 end.

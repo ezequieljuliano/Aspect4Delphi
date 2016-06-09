@@ -12,68 +12,62 @@ type
   ESecurityException = class(Exception);
 
   SecurityAttribute = class(AspectAttribute)
-  strict private
-    FPassword: string;
+  private
+    fPassword: string;
+  protected
+    { protected declarations }
   public
-    constructor Create(const pPassword: string);
-
-    property Password: string read FPassword;
+    constructor Create(const password: string);
+    property Password: string read fPassword;
   end;
 
   TSecurityAspect = class(TAspect, IAspect)
   public
-    procedure DoBefore(pInstance: TObject;
-      pMethod: TRttiMethod; const pArgs: TArray<TValue>; out pDoInvoke: Boolean;
-      out pResult: TValue);
+    procedure DoBefore(instance: TObject; method: TRttiMethod;
+      const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 
-    procedure DoAfter(pInstance: TObject;
-      pMethod: TRttiMethod; const pArgs: TArray<TValue>; var pResult: TValue);
+    procedure DoAfter(instance: TObject; method: TRttiMethod;
+      const args: TArray<TValue>; var result: TValue);
 
-    procedure DoException(pInstance: TObject;
-      pMethod: TRttiMethod; const pArgs: TArray<TValue>; out pRaiseException: Boolean;
-      pTheException: Exception; out pResult: TValue);
+    procedure DoException(instance: TObject; method: TRttiMethod;
+      const args: TArray<TValue>; out raiseException: Boolean;
+      theException: Exception; out result: TValue);
   end;
 
 var
-  GlobalPasswordSystem: string;
+  GlobalPasswordSystem: string = '';
 
 implementation
 
 { SecurityAttribute }
 
-constructor SecurityAttribute.Create(const pPassword: string);
+constructor SecurityAttribute.Create(const password: string);
 begin
-  FPassword := pPassword;
+  fPassword := password;
 end;
 
 { TSecurityAspect }
 
-procedure TSecurityAspect.DoAfter(pInstance: TObject; pMethod: TRttiMethod;
-  const pArgs: TArray<TValue>; var pResult: TValue);
+procedure TSecurityAspect.DoAfter(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; var result: TValue);
 begin
-  //
+  // Method unused
 end;
 
-procedure TSecurityAspect.DoBefore(pInstance: TObject; pMethod: TRttiMethod;
-  const pArgs: TArray<TValue>; out pDoInvoke: Boolean; out pResult: TValue);
+procedure TSecurityAspect.DoBefore(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; out invoke: Boolean;
+  out result: TValue);
 var
-  vAtt: TCustomAttribute;
+  att: TCustomAttribute;
 begin
-  for vAtt in pMethod.GetAttributes do
-    if vAtt is SecurityAttribute then
-      if (GlobalPasswordSystem <> SecurityAttribute(vAtt).Password) then
+  for att in method.GetAttributes do
+    if att is SecurityAttribute then
+      if (GlobalPasswordSystem <> SecurityAttribute(att).Password) then
         raise ESecurityException.Create('The password is invalid!');
 end;
 
-procedure TSecurityAspect.DoException(pInstance: TObject; pMethod: TRttiMethod;
-  const pArgs: TArray<TValue>; out pRaiseException: Boolean; pTheException: Exception;
-  out pResult: TValue);
+procedure TSecurityAspect.DoException(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; out raiseException: Boolean;
+  theException: Exception; out result: TValue);
 begin
-  //
+  // Method unused
 end;
-
-initialization
-
-Aspect.Register(TSecurityAspect);
 
 end.
