@@ -1,138 +1,295 @@
-# Aspect For Delphi #
-The Aspect4Delphi consists of an API that enables the use of the concept of [aspect-oriented programming (AOP)](http://en.wikipedia.org/wiki/Aspect-oriented_programming) in Delphi. 
+# Aspect For Delphi
+The Aspect4Delphi consists of an library that enables the use of the concept of [aspect-oriented programming (AOP)](http://en.wikipedia.org/wiki/Aspect-oriented_programming) in Delphi. 
 
-Consisting primarily of removing the crosscutting concerns ("crosscutting" or "separation of concerns") of a program in Delphi.
+## About The Project
+AOP is a programming paradigm that aims to increase modularity by allowing the separation of cross-cutting concerns. It does so by adding additional behavior to existing code without modification of the code itself. Instead, we can declare this new code and these new behaviors separately.
 
-Some examples of [OOP](http://en.wikipedia.org/wiki/Object-oriented_programming) issues are the "logs" of applications and the security part. In such cases, by working with objects, overdependence on objects that are the logs and the security part is inevitable, which is known as transverse interest, logs and security, not part of the core business ("core- business") of the application, but are sorely needed. To solve these problems was created the Aspect4Delphi.
+Aspect4Delphi helps us implement these cross-cutting concerns.
 
-The Aspect4Delphi requires Delphi XE or greater.
+### Types of Advice
+* Before advice: advice that executes before a join point, but which does not have the ability to prevent execution flow proceeding to the join point (unless it throws an exception).
+* After advice: advice to be executed after a join point completes normally: for example, if a method returns without throwing an exception.
+* Exception advice: Advice to be executed if a method exits by throwing an exception.
 
-# Using Aspects #
+### Built With
+* [Delphi Community Edition](https://www.embarcadero.com/br/products/delphi/starter) - The IDE used 
 
-First you must add the Aspect4Delphi in your IDE or project. Simply add the Search Path of your IDE or your project the following directories:
+## Getting Started
+To get a local copy up and running follow these simple steps.
 
-- Aspect4Delphi\src
+### Prerequisites
+To use this library an updated version of Delphi IDE (XE or higher) is required.
 
-Now you must implement and register your aspect. I will show an example for use of a logging mechanism. Create a new Unit and set its aspect. For this to Uses of Aspect4D.pas and implement the IAspect interface. It is important to use the heritage of TAspect base class. The IAspect interface defines what will be intercepted before, after and in the event of an exception in implementing the method defined in the context of aspects.
+### Installation
+Clone the repo
+```
+git clone https://github.com/ezequieljuliano/Aspect4Delphi.git
+```
 
-You can create specific exceptions of its aspect as in this example. Also, you must define a custom attribute (inheritance AspectAttribute) to annotate the methods you want to enter in the context of aspects.
+Add the "Search Path" of your IDE or your project the following directories:
+```
+Aspect4Delphi\src
+```
 
-    uses
-  	   Aspect4D,
-       System.Rtti,
-       System.SysUtils,
-       System.Classes;
+## Usage
+To provide the aspect orientation paradigm in your project with Aspect4Delphi you need:
 
-    type
+* Implement a pointcut attribute.
+* Implement a class that represents your aspect.
+* Register your pointcut attribute and its aspect class in context.
 
-  	   ELoggingException = class(Exception);
+### Sample
+To illustrate usage let's look at a solution for managing logs of an application.
 
-  	   LoggingAttribute = class(AspectAttribute);
+Implement a pointcut attribute (preferably inherits from AspectAttribute):
+```
+interface
 
-  	   TLoggingAspect = class(TAspect, IAspect)
-  	   private
-    	  { private declarations }
-  	   protected
-    	  function GetName: string;
+uses
 
-    	  procedure DoBefore(instance: TObject; method: TRttiMethod;
-             const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
+  Aspect.Core;
 
-          procedure DoAfter(instance: TObject; method: TRttiMethod;
-             const args: TArray<TValue>; var result: TValue);
+type
 
-          procedure DoException(instance: TObject; method: TRttiMethod;
-             const args: TArray<TValue>; out raiseException: Boolean;
-             theException: Exception; out result: TValue);
-       public
-          { public declarations }
-  	   end;
+  LoggingAttribute = class(AspectAttribute)
+  private
+    { private declarations }
+  protected
+    { protected declarations }
+  public
+    { public declarations }
+  end;
 
-   	{ TLoggingAspect }
+implementation
 
-	procedure TLoggingAspect.DoAfter(instance: TObject; method: TRttiMethod; 
-	   const args: TArray<TValue>; var result: TValue);
-	var
-  	   att: TCustomAttribute;
-	begin
-  	   for att in method.GetAttributes do
-    	 if att is LoggingAttribute then
-      		GlobalLoggingList.Add('After ' + instance.QualifiedClassName + ' - ' + method.Name);
-	end;
+end.
+```
 
-	procedure TLoggingAspect.DoBefore(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; 
-	   out invoke: Boolean; out result: TValue);
-	var
-  	   att: TCustomAttribute;
-	begin
-  	   for att in method.GetAttributes do
-    	 if att is LoggingAttribute then
-      		GlobalLoggingList.Add('Before ' + instance.QualifiedClassName + ' - ' + method.Name);
-	end;
+Implement the class that represents your aspect and contains the advices methods (you must implement the IAspect interface):
+```
+interface
 
-	procedure TLoggingAspect.DoException(instance: TObject; method: TRttiMethod; const args: TArray<TValue>; 
-		out raiseException: Boolean; theException: Exception; out result: TValue);
-	var
-  	   att: TCustomAttribute;
-	begin
-  	   for att in method.GetAttributes do
-    	  if att is LoggingAttribute then
-      		GlobalLoggingList.Add('Exception ' + instance.QualifiedClassName + ' - ' 
-					+ method.Name + ' - ' + theException.Message);
-	end;
+uses
 
-	function TLoggingAspect.GetName: string;
-	begin
-	   Result := Self.QualifiedClassName;
-	end;
+  System.SysUtils,
+  System.Rtti,
+  Aspect,
+  Aspect.Core,
+  Logging.Attribute,
+  Global.Context;
 
-Now to use their aspect, you simply add the custom attribute in their methods and remember to leave them as **virtual** (this is necessary because Delphi can only intercept the virtual methods).
+type
 
-    
-    TEntity = class
-    public    
-       [Logging]
-       procedure Insert; virtual;
-    
-       [Logging]
-       procedure Update; virtual;
-    
-       [Logging]
-       procedure Delete; virtual;
+  ELoggingAspectException = class(Exception)
+  private
+    { private declarations }
+  protected
+    { protected declarations }
+  public
+    { public declarations }
+  end;
+
+  TLoggingAspect = class(TAspectObject, IAspect)
+  private
+    { private declarations }
+  protected
+    procedure Before(
+      instance: TObject;
+      method: TRttiMethod;
+      const args: TArray<TValue>;
+      out invoke: Boolean;
+      out result: TValue
+      ); override;
+
+    procedure After(
+      instance: TObject;
+      method: TRttiMethod;
+      const args: TArray<TValue>;
+      var result: TValue
+      ); override;
+
+    procedure Exception(
+      instance: TObject;
+      method: TRttiMethod;
+      const args: TArray<TValue>;
+      out raiseException: Boolean;
+      theException: Exception;
+      out result: TValue
+      ); override;
+  public
+    { public declarations }
+  end;
+
+implementation
+
+{ TLoggingAspect }
+
+procedure TLoggingAspect.After(instance: TObject; method: TRttiMethod;
+  const args: TArray<TValue>; var result: TValue);
+var
+  attribute: TCustomAttribute;
+begin
+  inherited;
+  for attribute in method.GetAttributes do
+    if attribute is LoggingAttribute then
+    begin
+      LoggingFile.Add('After the execution of ' + 
+		instance.QualifiedClassName + ' - ' + 
+		method.Name
+	  );
+      Break;
     end;
+end;
 
+procedure TLoggingAspect.Before(instance: TObject; method: TRttiMethod;
+  const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
+var
+  attribute: TCustomAttribute;
+begin
+  inherited;
+  for attribute in method.GetAttributes do
+    if attribute is LoggingAttribute then
+    begin
+      LoggingFile.Add('Before the execution of ' + 
+		instance.QualifiedClassName + ' - ' + 
+		method.Name
+	  );
+      Break;
+    end;
+end;
 
-Now create AOP context, register your aspect (for example TLoggingAspect) and use your entity to the context. 
+procedure TLoggingAspect.Exception(instance: TObject; method: TRttiMethod;
+  const args: TArray<TValue>; out raiseException: Boolean;
+  theException: Exception; out result: TValue);
+var
+  attribute: TCustomAttribute;
+begin
+  inherited;
+  for attribute in method.GetAttributes do
+    if attribute is LoggingAttribute then
+    begin
+      LoggingFile.Add('Exception in executing ' + 
+		instance.QualifiedClassName + ' - ' + 
+		method.Name + ' - ' + 
+		theException.Message
+	  );
+      Break;
+    end;
+end;
 
-*Note: You can set AOP context as a singleton and create a base class to the Proxify and Unproxify*. 
+end.
+```
 
-	uses
-	   Aspect4D,
-  	   Aspect4D.Impl;
+Register your pointcut attribute and its aspect class in context (preferably keep this context in singleton instance):
+```
+interface
 
-	procedure CreateAndUseAspect;
-	var
-	   aspectContext: IAspectContext;
-       entity: TEntity;
-	begin
-	   aspectContext := TAspectContext.Create;
-  	   aspectContext.Register(TLoggingAspect.Create);
+uses
 
-	   entity := TCarEntity.Create;
-       try		
-		  aspectContext.Weaver.Proxify(entity);
-          entity.Insert;
-          entity.Update;
-          entity.Delete;
-          aspectContext.Weaver.Unproxify(entity);
-	   finally          
-		  entity.Free;
-       end;
-	end;
+  Logging.Aspect;
+  Aspect.Context;  
+  
+function AspectContext: IAspectContext;
 
-Basically what it takes to use the Aspect4Delphi:
+implementation
 
-- Create your aspect implementing IAspect interface.
-- Create AOP context and register your aspect.
-- Add the instance to the context using the Proxify.
-- Remove the instance of using the context Unproxify;
+var
+
+  CurrentAspectContext: IAspectContext = nil;
+  
+function AspectContext: IAspectContext;
+begin
+  if (CurrentAspectContext = nil) then
+  begin
+    CurrentAspectContext := TAspectContextFactory.New;
+    CurrentAspectContext.Register(TLoggingAspect.Create);
+  end;
+  Result := CurrentAspectContext;
+end;
+
+end.
+```
+
+In your business rule class use the attribute to define your joins points. You can use the constructor and destructor to add your class at the Weaver.
+```
+interface
+
+uses
+
+  System.SysUtils,
+  Logging.Attribute,
+  Global.Context;
+
+type
+
+  EWhatsAppMessageException = class(Exception)
+  private
+    { private declarations }
+  protected
+    { protected declarations }
+  public
+    { public declarations }
+  end;
+
+  TWhatsAppMessage = class
+  private
+    { private declarations }
+  protected
+    { protected declarations }
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    [Logging]
+    procedure Send; virtual;
+  end;
+
+implementation
+
+{ TWhatsAppMessage }
+
+constructor TWhatsAppMessage.Create;
+begin
+  inherited Create;
+  AspectContext.Weaver.Proxify(Self);
+end;
+
+destructor TWhatsAppMessage.Destroy;
+begin
+  AspectContext.Weaver.Unproxify(Self);
+  inherited Destroy;
+end;
+
+procedure TWhatsAppMessage.Send;
+begin
+  //Execution of send.
+end;
+```
+
+## Roadmap
+
+See the [open issues](https://github.com/ezequieljuliano/Aspect4Delphi/issues) for a list of proposed features (and known issues).
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+Distributed under the APACHE LICENSE. See `LICENSE` for more information.
+
+## Contact
+
+Ezequiel Juliano Müller 
+E-mail: ezequieljuliano@gmail.com
+Twitter: [@ezequieljuliano](https://twitter.com/ezequieljuliano)
+Linkedin: [ezequiel-juliano-müller](https://www.linkedin.com/in/ezequiel-juliano-müller-43988a4a)
+
+## Project Link
+[https://github.com/ezequieljuliano/Aspect4Delphi](https://github.com/ezequieljuliano/Aspect4Delphi)

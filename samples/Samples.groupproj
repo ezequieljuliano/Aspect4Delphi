@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{72B4BA3E-F124-44F4-8CFD-70C87D36AB3A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="security\SecurityApp.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="logging\LoggingApp.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="transaction\TransactionApp.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="SecurityApp">
+        <MSBuild Projects="security\SecurityApp.dproj"/>
+    </Target>
+    <Target Name="SecurityApp:Clean">
+        <MSBuild Projects="security\SecurityApp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SecurityApp:Make">
+        <MSBuild Projects="security\SecurityApp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="LoggingApp">
+        <MSBuild Projects="logging\LoggingApp.dproj"/>
+    </Target>
+    <Target Name="LoggingApp:Clean">
+        <MSBuild Projects="logging\LoggingApp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="LoggingApp:Make">
+        <MSBuild Projects="logging\LoggingApp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TransactionApp">
+        <MSBuild Projects="transaction\TransactionApp.dproj"/>
+    </Target>
+    <Target Name="TransactionApp:Clean">
+        <MSBuild Projects="transaction\TransactionApp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TransactionApp:Make">
+        <MSBuild Projects="transaction\TransactionApp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="SecurityApp;LoggingApp;TransactionApp"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="SecurityApp:Clean;LoggingApp:Clean;TransactionApp:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="SecurityApp:Make;LoggingApp:Make;TransactionApp:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
