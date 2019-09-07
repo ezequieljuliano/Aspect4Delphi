@@ -286,10 +286,10 @@ Distributed under the APACHE LICENSE. See `LICENSE` for more information.
 
 ## Contact
 
-Ezequiel Juliano Müller
-E-mail: ezequieljuliano@gmail.com
-Twitter: [@ezequieljuliano](https://twitter.com/ezequieljuliano)
-Linkedin: [ezequiel-juliano-müller](https://www.linkedin.com/in/ezequiel-juliano-müller-43988a4a)
+To contact us use the options:
+* E-mail  : ezequieljuliano@gmail.com
+* Twitter : [@ezequieljuliano](https://twitter.com/ezequieljuliano)
+* Linkedin: [ezequiel-juliano-müller](https://www.linkedin.com/in/ezequiel-juliano-müller-43988a4a)
 
 ## Project Link
 [https://github.com/ezequieljuliano/Aspect4Delphi](https://github.com/ezequieljuliano/Aspect4Delphi)
