@@ -28,7 +28,7 @@ uses
 
   Person,
   RequiredRole.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 

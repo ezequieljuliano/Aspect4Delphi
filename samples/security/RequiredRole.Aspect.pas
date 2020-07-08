@@ -31,7 +31,7 @@ uses
   Aspect,
   Aspect.Core,
   RequiredRole.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 

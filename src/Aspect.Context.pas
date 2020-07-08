@@ -34,13 +34,13 @@ type
 
   IAspectContext = interface
     ['{962E0295-9091-41CA-AF39-F6FD41174231}']
-    procedure &Register(aspect: IAspect);
+    procedure RegisterAspect(aspect: IAspect);
     function Weaver: IAspectWeaver;
   end;
 
   TAspectContextFactory = record
   public
-    class function New: IAspectContext; static;
+    class function NewInstance: IAspectContext; static;
   end;
 
 implementation
@@ -52,20 +52,20 @@ type
     fInterceptor: TAspectInterceptor;
     fWeaver: IAspectWeaver;
   protected
-    procedure &Register(aspect: IAspect);
+    procedure RegisterAspect(aspect: IAspect);
     function Weaver: IAspectWeaver;
   public
     constructor Create;
     destructor Destroy; override;
   end;
 
-{ TAspectContext }
+  { TAspectContext }
 
 constructor TAspectContext.Create;
 begin
   inherited Create;
   fInterceptor := TAspectInterceptor.Create;
-  fWeaver := TAspectWeaverFactory.New(fInterceptor);
+  fWeaver := TAspectWeaverFactory.NewInstance(fInterceptor);
 end;
 
 destructor TAspectContext.Destroy;
@@ -74,7 +74,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TAspectContext.Register(aspect: IAspect);
+procedure TAspectContext.RegisterAspect(aspect: IAspect);
 begin
   if not fInterceptor.Contains(aspect.Name) then
     fInterceptor.Add(aspect.Name, aspect);
@@ -87,7 +87,7 @@ end;
 
 { TAspectContextFactory }
 
-class function TAspectContextFactory.New: IAspectContext;
+class function TAspectContextFactory.NewInstance: IAspectContext;
 begin
   Result := TAspectContext.Create;
 end;

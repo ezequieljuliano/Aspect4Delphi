@@ -24,12 +24,12 @@ program TransactionApp;
 
 uses
   Vcl.Forms,
-  Main.View in 'Main.View.pas' {MainView} ,
-  DB.Connection in 'DB.Connection.pas' {DBConnection: TDataModule} ,
-  Invoice.Model in 'Invoice.Model.pas' {InvoiceModel: TDataModule} ,
+  Main.View in 'Main.View.pas' {MainView},
+  DB.Connection in 'DB.Connection.pas' {DBConnection: TDataModule},
+  Invoice.Model in 'Invoice.Model.pas' {InvoiceModel: TDataModule},
   Transactional.Attribute in 'Transactional.Attribute.pas',
   Transactional.Aspect in 'Transactional.Aspect.pas',
-  Global.Context in 'Global.Context.pas',
+  App.Context in 'App.Context.pas',
   Invoice.Dto in 'Invoice.Dto.pas',
   Invoice.Repository in 'Invoice.Repository.pas';
 

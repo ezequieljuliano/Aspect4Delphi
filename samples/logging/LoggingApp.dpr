@@ -25,7 +25,7 @@ program LoggingApp;
 uses
   Vcl.Forms,
   Main.View in 'Main.View.pas' {MainView},
-  Global.Context in 'Global.Context.pas',
+  App.Context in 'App.Context.pas',
   Logging.Attribute in 'Logging.Attribute.pas',
   Logging.Aspect in 'Logging.Aspect.pas',
   Email.Message in 'Email.Message.pas',

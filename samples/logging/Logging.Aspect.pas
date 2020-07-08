@@ -31,7 +31,7 @@ uses
   Aspect,
   Aspect.Core,
   Logging.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 

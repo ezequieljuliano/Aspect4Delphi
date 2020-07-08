@@ -20,7 +20,7 @@
 //
 // ***************************************************************************
 
-unit Global.Context;
+unit App.Context;
 
 interface
 
@@ -28,30 +28,26 @@ uses
 
   Aspect.Context;
 
-var
-
-  CurrentSecurityRole: string = '';
-
 function AspectContext: IAspectContext;
 
 implementation
 
 uses
 
-  RequiredRole.Aspect;
+  Transactional.Aspect;
 
 var
 
-  CurrentAspectContext: IAspectContext = nil;
+  AspectContextInstance: IAspectContext = nil;
 
 function AspectContext: IAspectContext;
 begin
-  if (CurrentAspectContext = nil) then
+  if (AspectContextInstance = nil) then
   begin
-    CurrentAspectContext := TAspectContextFactory.New;
-    CurrentAspectContext.Register(TRequiredRoleAspect.Create);
+    AspectContextInstance := TAspectContextFactory.NewInstance;
+    AspectContextInstance.RegisterAspect(TTransactionalAspect.Create);
   end;
-  Result := CurrentAspectContext;
+  Result := AspectContextInstance;
 end;
 
 end.

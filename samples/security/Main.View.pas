@@ -26,7 +26,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Person, Person.Repository, Global.Context,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Person, Person.Repository, App.Context,
   Vcl.StdCtrls;
 
 type

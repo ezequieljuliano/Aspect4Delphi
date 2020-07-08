@@ -29,7 +29,7 @@ uses
   Invoice.Dto,
   Invoice.Model,
   Transactional.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 

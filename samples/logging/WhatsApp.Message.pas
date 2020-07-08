@@ -28,7 +28,7 @@ uses
 
   System.SysUtils,
   Logging.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 

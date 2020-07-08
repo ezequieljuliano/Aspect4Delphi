@@ -134,8 +134,8 @@ begin
   fAspectBeforeEvent := False;
   fAspectExceptionEvent := False;
 
-  fAspectContext := TAspectContextFactory.New;
-  fAspectContext.Register(TMockAspect.Create(Self));
+  fAspectContext := TAspectContextFactory.NewInstance;
+  fAspectContext.RegisterAspect(TMockAspect.Create(Self));
   fMockObject := TMockObject.Create;
   fAspectContext.Weaver.Proxify(fMockObject);
 end;

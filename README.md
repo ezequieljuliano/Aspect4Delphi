@@ -37,6 +37,8 @@ To provide the aspect orientation paradigm in your project with Aspect4Delphi yo
 * Implement a pointcut attribute.
 * Implement a class that represents your aspect.
 * Register your pointcut attribute and its aspect class in context.
+* Set your classes methods to virtual.
+* Write down your methods with the respective aspect.
 
 ### Sample
 To illustrate usage let's look at a solution for managing logs of an application.
@@ -76,7 +78,7 @@ uses
   Aspect,
   Aspect.Core,
   Logging.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 
@@ -195,16 +197,16 @@ implementation
 
 var
 
-  CurrentAspectContext: IAspectContext = nil;
+  AspectContextInstance: IAspectContext = nil;
   
 function AspectContext: IAspectContext;
 begin
-  if (CurrentAspectContext = nil) then
+  if (AspectContextInstance = nil) then
   begin
-    CurrentAspectContext := TAspectContextFactory.New;
-    CurrentAspectContext.Register(TLoggingAspect.Create);
+    AspectContextInstance := TAspectContextFactory.NewInstance;
+    AspectContextInstance.RegisterAspect(TLoggingAspect.Create);
   end;
-  Result := CurrentAspectContext;
+  Result := AspectContextInstance;
 end;
 
 end.
@@ -218,7 +220,7 @@ uses
 
   System.SysUtils,
   Logging.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 

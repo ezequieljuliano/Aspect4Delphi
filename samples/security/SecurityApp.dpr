@@ -29,7 +29,7 @@ uses
   Person in 'Person.pas',
   RequiredRole.Attribute in 'RequiredRole.Attribute.pas',
   RequiredRole.Aspect in 'RequiredRole.Aspect.pas',
-  Global.Context in 'Global.Context.pas';
+  App.Context in 'App.Context.pas';
 
 {$R *.res}
 

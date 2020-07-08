@@ -20,7 +20,7 @@
 //
 // ***************************************************************************
 
-unit Global.Context;
+unit App.Context;
 
 interface
 
@@ -46,22 +46,22 @@ const
 
 var
 
-  CurrentLoggingFile: TStringList;
-  CurrentAspectContext: IAspectContext = nil;
+  LoggingFileInstance: TStringList;
+  AspectContextInstance: IAspectContext = nil;
 
 function LoggingFile: TStringList;
 begin
-  Result := CurrentLoggingFile;
+  Result := LoggingFileInstance;
 end;
 
 function AspectContext: IAspectContext;
 begin
-  if (CurrentAspectContext = nil) then
+  if (AspectContextInstance = nil) then
   begin
-    CurrentAspectContext := TAspectContextFactory.New;
-    CurrentAspectContext.Register(TLoggingAspect.Create);
+    AspectContextInstance := TAspectContextFactory.NewInstance;
+    AspectContextInstance.RegisterAspect(TLoggingAspect.Create);
   end;
-  Result := CurrentAspectContext;
+  Result := AspectContextInstance;
 end;
 
 function GetLoggingFileName: string;
@@ -71,17 +71,17 @@ end;
 
 procedure InitializeLoggingFile;
 begin
-  CurrentLoggingFile := TStringList.Create;
+  LoggingFileInstance := TStringList.Create;
   if TFile.Exists(GetLoggingFileName) then
-    CurrentLoggingFile.LoadFromFile(GetLoggingFileName);
+    LoggingFileInstance.LoadFromFile(GetLoggingFileName);
 end;
 
 procedure FinalizeLoggingFile;
 begin
   if TFile.Exists(GetLoggingFileName) then
     TFile.Delete(GetLoggingFileName);
-  CurrentLoggingFile.SaveToFile(GetLoggingFileName);
-  CurrentLoggingFile.Free;
+  LoggingFileInstance.SaveToFile(GetLoggingFileName);
+  LoggingFileInstance.Free;
 end;
 
 initialization

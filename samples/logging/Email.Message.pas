@@ -27,7 +27,7 @@ interface
 uses
 
   Logging.Attribute,
-  Global.Context;
+  App.Context;
 
 type
 
