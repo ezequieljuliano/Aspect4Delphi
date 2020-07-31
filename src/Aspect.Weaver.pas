@@ -41,7 +41,7 @@ type
 
   TAspectWeaverFactory = record
   public
-    class function NewInstance(interceptor: TAspectInterceptor): IAspectWeaver; static;
+    class function NewAspectWeaver(interceptor: TAspectInterceptor): IAspectWeaver; static;
   end;
 
 implementation
@@ -104,7 +104,7 @@ end;
 
 { TAspectWeaverFactory }
 
-class function TAspectWeaverFactory.NewInstance(interceptor: TAspectInterceptor): IAspectWeaver;
+class function TAspectWeaverFactory.NewAspectWeaver(interceptor: TAspectInterceptor): IAspectWeaver;
 begin
   Result := TAspectWeaver.Create(interceptor);
 end;

@@ -203,7 +203,7 @@ function AspectContext: IAspectContext;
 begin
   if (AspectContextInstance = nil) then
   begin
-    AspectContextInstance := TAspectContextFactory.NewInstance;
+    AspectContextInstance := TAspectContextFactory.NewAspectContext;
     AspectContextInstance.RegisterAspect(TLoggingAspect.Create);
   end;
   Result := AspectContextInstance;

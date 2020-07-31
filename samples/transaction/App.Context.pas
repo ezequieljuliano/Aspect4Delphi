@@ -44,7 +44,7 @@ function AspectContext: IAspectContext;
 begin
   if (AspectContextInstance = nil) then
   begin
-    AspectContextInstance := TAspectContextFactory.NewInstance;
+    AspectContextInstance := TAspectContextFactory.NewAspectContext;
     AspectContextInstance.RegisterAspect(TTransactionalAspect.Create);
   end;
   Result := AspectContextInstance;

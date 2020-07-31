@@ -40,7 +40,7 @@ type
 
   TAspectContextFactory = record
   public
-    class function NewInstance: IAspectContext; static;
+    class function NewAspectContext: IAspectContext; static;
   end;
 
 implementation
@@ -65,7 +65,7 @@ constructor TAspectContext.Create;
 begin
   inherited Create;
   fInterceptor := TAspectInterceptor.Create;
-  fWeaver := TAspectWeaverFactory.NewInstance(fInterceptor);
+  fWeaver := TAspectWeaverFactory.NewAspectWeaver(fInterceptor);
 end;
 
 destructor TAspectContext.Destroy;
@@ -87,7 +87,7 @@ end;
 
 { TAspectContextFactory }
 
-class function TAspectContextFactory.NewInstance: IAspectContext;
+class function TAspectContextFactory.NewAspectContext: IAspectContext;
 begin
   Result := TAspectContext.Create;
 end;
