@@ -26,6 +26,7 @@ interface
 
 uses
 
+  Aspect,
   Aspect.Context;
 
 var
@@ -48,7 +49,7 @@ function AspectContext: IAspectContext;
 begin
   if (AspectContextInstance = nil) then
   begin
-    AspectContextInstance := TAspectContextFactory.NewAspectContext;
+    AspectContextInstance := TAspectContext.Create;
     AspectContextInstance.RegisterAspect(TRequiredRoleAspect.Create);
   end;
   Result := AspectContextInstance;

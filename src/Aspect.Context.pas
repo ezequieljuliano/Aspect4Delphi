@@ -2,7 +2,7 @@
 //
 // Aspect For Delphi
 //
-// Copyright (c) 2015-2019 Ezequiel Juliano Müller
+// Copyright (c) 2015-2020 Ezequiel Juliano Müller
 //
 // ***************************************************************************
 //
@@ -32,21 +32,6 @@ uses
 
 type
 
-  IAspectContext = interface
-    ['{962E0295-9091-41CA-AF39-F6FD41174231}']
-    procedure RegisterAspect(aspect: IAspect);
-    function Weaver: IAspectWeaver;
-  end;
-
-  TAspectContextFactory = record
-  public
-    class function NewAspectContext: IAspectContext; static;
-  end;
-
-implementation
-
-type
-
   TAspectContext = class(TInterfacedObject, IAspectContext)
   private
     fInterceptor: TAspectInterceptor;
@@ -59,13 +44,15 @@ type
     destructor Destroy; override;
   end;
 
-  { TAspectContext }
+implementation
+
+{ TAspectContext }
 
 constructor TAspectContext.Create;
 begin
   inherited Create;
   fInterceptor := TAspectInterceptor.Create;
-  fWeaver := TAspectWeaverFactory.NewAspectWeaver(fInterceptor);
+  fWeaver := TAspectWeaver.Create(fInterceptor);
 end;
 
 destructor TAspectContext.Destroy;
@@ -83,13 +70,6 @@ end;
 function TAspectContext.Weaver: IAspectWeaver;
 begin
   Result := fWeaver;
-end;
-
-{ TAspectContextFactory }
-
-class function TAspectContextFactory.NewAspectContext: IAspectContext;
-begin
-  Result := TAspectContext.Create;
 end;
 
 end.

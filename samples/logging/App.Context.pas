@@ -29,6 +29,7 @@ uses
   System.SysUtils,
   System.Classes,
   System.IOUtils,
+  Aspect,
   Aspect.Context;
 
 function LoggingFile: TStringList;
@@ -58,7 +59,7 @@ function AspectContext: IAspectContext;
 begin
   if (AspectContextInstance = nil) then
   begin
-    AspectContextInstance := TAspectContextFactory.NewAspectContext;
+    AspectContextInstance := TAspectContext.Create;
     AspectContextInstance.RegisterAspect(TLoggingAspect.Create);
   end;
   Result := AspectContextInstance;

@@ -2,7 +2,7 @@
 //
 // Aspect For Delphi
 //
-// Copyright (c) 2015-2019 Ezequiel Juliano Müller
+// Copyright (c) 2015-2020 Ezequiel Juliano Müller
 //
 // ***************************************************************************
 //
@@ -56,7 +56,7 @@ type
   protected
     function GetName: string;
 
-    procedure Before(
+    procedure OnBefore(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -64,14 +64,14 @@ type
       out result: TValue
       ); virtual;
 
-    procedure After(
+    procedure OnAfter(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
       var result: TValue
       ); virtual;
 
-    procedure Exception(
+    procedure OnException(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -87,19 +87,19 @@ implementation
 
 { TAspectObject }
 
-procedure TAspectObject.After(instance: TObject; method: TRttiMethod;
+procedure TAspectObject.OnAfter(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; var result: TValue);
 begin
   // implemented if necessary in the aspects
 end;
 
-procedure TAspectObject.Before(instance: TObject; method: TRttiMethod;
+procedure TAspectObject.OnBefore(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 begin
   // implemented if necessary in the aspects
 end;
 
-procedure TAspectObject.Exception(instance: TObject; method: TRttiMethod;
+procedure TAspectObject.OnException(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; out raiseException: Boolean;
   theException: Exception; out result: TValue);
 begin

@@ -48,7 +48,7 @@ type
   private
     { private declarations }
   protected
-    procedure Before(
+    procedure OnBefore(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -63,7 +63,7 @@ implementation
 
 { TRequiredRoleAspect }
 
-procedure TRequiredRoleAspect.Before(instance: TObject;
+procedure TRequiredRoleAspect.OnBefore(instance: TObject;
   method: TRttiMethod; const args: TArray<TValue>; out invoke: Boolean;
   out result: TValue);
 var

@@ -2,7 +2,7 @@
 //
 // Aspect For Delphi
 //
-// Copyright (c) 2015-2019 Ezequiel Juliano Müller
+// Copyright (c) 2015-2020 Ezequiel Juliano Müller
 //
 // ***************************************************************************
 //
@@ -63,7 +63,7 @@ type
     protected
       constructor Create(aspectTestCase: TTestAspect);
 
-      procedure Before(
+      procedure OnBefore(
         instance: TObject;
         method: TRttiMethod;
         const args: TArray<TValue>;
@@ -71,14 +71,14 @@ type
         out result: TValue
         ); override;
 
-      procedure After(
+      procedure OnAfter(
         instance: TObject;
         method: TRttiMethod;
         const args: TArray<TValue>;
         var result: TValue
         ); override;
 
-      procedure Exception(
+      procedure OnException(
         instance: TObject;
         method: TRttiMethod;
         const args: TArray<TValue>;
@@ -134,7 +134,7 @@ begin
   fAspectBeforeEvent := False;
   fAspectExceptionEvent := False;
 
-  fAspectContext := TAspectContextFactory.NewAspectContext;
+  fAspectContext := TAspectContext.Create;
   fAspectContext.RegisterAspect(TMockAspect.Create(Self));
   fMockObject := TMockObject.Create;
   fAspectContext.Weaver.Proxify(fMockObject);
@@ -177,7 +177,7 @@ end;
 
 { TTestAspect.TMockAspect }
 
-procedure TTestAspect.TMockAspect.After(instance: TObject;
+procedure TTestAspect.TMockAspect.OnAfter(instance: TObject;
   method: TRttiMethod; const args: TArray<TValue>; var result: TValue);
 var
   attribute: TCustomAttribute;
@@ -192,7 +192,7 @@ begin
     end;
 end;
 
-procedure TTestAspect.TMockAspect.Before(instance: TObject;
+procedure TTestAspect.TMockAspect.OnBefore(instance: TObject;
   method: TRttiMethod; const args: TArray<TValue>; out invoke: Boolean;
   out result: TValue);
 var
@@ -213,7 +213,7 @@ begin
   fAspectTestCase := aspectTestCase;
 end;
 
-procedure TTestAspect.TMockAspect.Exception(instance: TObject;
+procedure TTestAspect.TMockAspect.OnException(instance: TObject;
   method: TRttiMethod; const args: TArray<TValue>;
   out raiseException: Boolean; theException: Exception;
   out result: TValue);

@@ -2,7 +2,7 @@
 //
 // Aspect For Delphi
 //
-// Copyright (c) 2015-2019 Ezequiel Juliano Müller
+// Copyright (c) 2015-2020 Ezequiel Juliano Müller
 //
 // ***************************************************************************
 //
@@ -35,7 +35,7 @@ type
     ['{7647B37E-7BEA-42BD-ADEE-E719AF3C6CE9}']
     function GetName: string;
 
-    procedure Before(
+    procedure OnBefore(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -43,14 +43,14 @@ type
       out result: TValue
       );
 
-    procedure After(
+    procedure OnAfter(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
       var result: TValue
       );
 
-    procedure Exception(
+    procedure OnException(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -60,6 +60,18 @@ type
       );
 
     property Name: string read GetName;
+  end;
+
+  IAspectWeaver = interface
+    ['{211E40BC-753F-4865-BB35-9CF81F1435C7}']
+    procedure Proxify(instance: TObject);
+    procedure Unproxify(instance: TObject);
+  end;
+
+  IAspectContext = interface
+    ['{962E0295-9091-41CA-AF39-F6FD41174231}']
+    procedure RegisterAspect(aspect: IAspect);
+    function Weaver: IAspectWeaver;
   end;
 
 implementation

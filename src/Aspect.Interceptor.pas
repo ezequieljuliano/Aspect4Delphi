@@ -2,7 +2,7 @@
 //
 // Aspect For Delphi
 //
-// Copyright (c) 2015-2019 Ezequiel Juliano Müller
+// Copyright (c) 2015-2020 Ezequiel Juliano Müller
 //
 // ***************************************************************************
 //
@@ -45,7 +45,7 @@ type
     procedure Add(const name: string; aspect: IAspect);
     function Contains(const name: string): Boolean;
 
-    procedure Before(
+    procedure OnBefore(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -53,14 +53,14 @@ type
       out result: TValue
       );
 
-    procedure After(
+    procedure OnAfter(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
       var result: TValue
       );
 
-    procedure Exception(
+    procedure OnException(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -79,22 +79,22 @@ begin
   fAspects.AddOrSetValue(name, aspect);
 end;
 
-procedure TAspectInterceptor.After(instance: TObject; method: TRttiMethod;
+procedure TAspectInterceptor.OnAfter(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; var result: TValue);
 var
   aspectPair: TPair<string, IAspect>;
 begin
   for aspectPair in fAspects do
-    aspectPair.Value.After(instance, method, args, result);
+    aspectPair.Value.OnAfter(instance, method, args, result);
 end;
 
-procedure TAspectInterceptor.Before(instance: TObject; method: TRttiMethod;
+procedure TAspectInterceptor.OnBefore(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 var
   aspectPair: TPair<string, IAspect>;
 begin
   for aspectPair in fAspects do
-    aspectPair.Value.Before(instance, method, args, invoke, result);
+    aspectPair.Value.OnBefore(instance, method, args, invoke, result);
 end;
 
 function TAspectInterceptor.Contains(const name: string): Boolean;
@@ -114,7 +114,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TAspectInterceptor.Exception(instance: TObject;
+procedure TAspectInterceptor.OnException(instance: TObject;
   method: TRttiMethod; const args: TArray<TValue>;
   out raiseException: Boolean; theException: Exception;
   out result: TValue);
@@ -122,7 +122,7 @@ var
   aspectPair: TPair<string, IAspect>;
 begin
   for aspectPair in fAspects do
-    aspectPair.Value.Exception(instance, method, args, raiseException, theException, result);
+    aspectPair.Value.OnException(instance, method, args, raiseException, theException, result);
 end;
 
 end.

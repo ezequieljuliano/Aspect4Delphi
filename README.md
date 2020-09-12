@@ -95,7 +95,7 @@ type
   private
     { private declarations }
   protected
-    procedure Before(
+    procedure OnBefore(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -103,14 +103,14 @@ type
       out result: TValue
       ); override;
 
-    procedure After(
+    procedure OnAfter(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
       var result: TValue
       ); override;
 
-    procedure Exception(
+    procedure OnException(
       instance: TObject;
       method: TRttiMethod;
       const args: TArray<TValue>;
@@ -126,7 +126,7 @@ implementation
 
 { TLoggingAspect }
 
-procedure TLoggingAspect.After(instance: TObject; method: TRttiMethod;
+procedure TLoggingAspect.OnAfter(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; var result: TValue);
 var
   attribute: TCustomAttribute;
@@ -143,7 +143,7 @@ begin
     end;
 end;
 
-procedure TLoggingAspect.Before(instance: TObject; method: TRttiMethod;
+procedure TLoggingAspect.OnBefore(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; out invoke: Boolean; out result: TValue);
 var
   attribute: TCustomAttribute;
@@ -160,7 +160,7 @@ begin
     end;
 end;
 
-procedure TLoggingAspect.Exception(instance: TObject; method: TRttiMethod;
+procedure TLoggingAspect.OnException(instance: TObject; method: TRttiMethod;
   const args: TArray<TValue>; out raiseException: Boolean;
   theException: Exception; out result: TValue);
 var
@@ -203,7 +203,7 @@ function AspectContext: IAspectContext;
 begin
   if (AspectContextInstance = nil) then
   begin
-    AspectContextInstance := TAspectContextFactory.NewAspectContext;
+    AspectContextInstance := TAspectContext.Create;
     AspectContextInstance.RegisterAspect(TLoggingAspect.Create);
   end;
   Result := AspectContextInstance;
